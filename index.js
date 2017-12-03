@@ -39,6 +39,9 @@ const builtinSources = {
   zlib: { name: 'browserify-zlib', resolved: undefined }
 };
 
+const isWindows = process.platform === 'win32';
+const winSepRegEx = /\\/g;
+
 module.exports = function (builtinName) {
   const builtinSource = builtinSources[builtinName];
   if (!builtinSource) {
@@ -46,7 +49,11 @@ module.exports = function (builtinName) {
     e.code = 'MODULE_NOT_FOUND';
     throw e;
   }
-  if (builtinSource.resolved === undefined)
-    builtinSource.resolved = require.resolve(builtinSource.name);
+  if (builtinSource.resolved === undefined) {
+    const resolved = require.resolve(builtinSource.name);
+    if (isWindows)
+      resolved = resolved.replace(winSepRegEx, '/');
+    builtinSource.resolved = resolved;
+  }
   return builtinSource.resolved;
 };
