@@ -50,7 +50,7 @@ module.exports = function (builtinName) {
     throw e;
   }
   if (builtinSource.resolved === undefined) {
-    const resolved = require.resolve(builtinSource.name);
+    let resolved = require.resolve(builtinSource.name);
     if (isWindows)
       resolved = resolved.replace(winSepRegEx, '/');
     builtinSource.resolved = resolved;
